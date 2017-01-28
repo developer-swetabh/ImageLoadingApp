@@ -100,8 +100,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mFragment.getCurrentAnimator() != null) {
-            mFragment.getCurrentAnimator().cancel();
+        if (mFragment != null) {
+            if (mFragment.getCurrentAnimator() != null) {
+                mFragment.getCurrentAnimator().cancel();
+            }
+            else {
+                this.finish();
+            }
         } else {
             this.finish();
         }
