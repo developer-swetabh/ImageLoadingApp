@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ImageLoadingApp</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nature">Nature : %s</string>
+    <string name="internet_connect_check">Please Check Your Internet Connectivity.</string>
+</resources>
