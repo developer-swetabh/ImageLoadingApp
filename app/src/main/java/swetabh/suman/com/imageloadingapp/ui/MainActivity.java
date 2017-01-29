@@ -79,31 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-       /* if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.frame_content, new ImageGridFragment(), TAG);
-            ft.commit();
-        } else {
-            RequestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, STORAGE_RESULT_CODE);
-        }*/
-        //initilizeUi();
-        //initializeImageLoadingLibrary();
-        //setLayoutManagerToRecyclerView();
-
-       /* mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // do refreshing
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
-
-        if (savedInstanceState == null) {
-            callWebService();
-        } else {
-            adapter.addData(mList);
-        }*/
     }
 
     @Override
