@@ -12,25 +12,17 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.AbsListView;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +31,10 @@ import swetabh.suman.com.imageloadingapp.BuildConfig;
 import swetabh.suman.com.imageloadingapp.R;
 import swetabh.suman.com.imageloadingapp.data.model.ResponseModel;
 import swetabh.suman.com.imageloadingapp.ui.adapter.GridImageAdapter;
-import swetabh.suman.com.imageloadingapp.ui.customclass.RecyclingImageView;
+import swetabh.suman.com.imageloadingapp.ui.customclass.InfiniteScrollListener;
 import swetabh.suman.com.imageloadinglibrary.ImageCache;
 import swetabh.suman.com.imageloadinglibrary.ImageFetcher;
 import swetabh.suman.com.imageloadinglibrary.Utils;
-
-import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_FLING;
-import static android.widget.Toast.LENGTH_SHORT;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,6 +55,7 @@ public class ImageGridFragment extends Fragment implements ResponseModel.IListRe
     private int mImageThumbSize;
     private int mImageThumbSpacing;
     private Context mContext;
+    private boolean loadMore = false;
     /*
     * Hold a reference to the current animator, so that it can be canceled mid-way.
     */
@@ -175,21 +165,32 @@ public class ImageGridFragment extends Fragment implements ResponseModel.IListRe
         if (swetabh.suman.com.imageloadingapp.util.Utils.isNetworkConnected(mContext)) {
             if (!mIsRefreshing) {
                 progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setMessage("Please Wait . . . ");
+                if (loadMore) {
+                    progressDialog.setMessage("Loading More Items . . . ");
+                } else {
+                    progressDialog.setMessage("Please Wait . . . ");
+                }
                 progressDialog.setIndeterminate(true);
                 progressDialog.show();
             }
             ResponseModel responseModel = new ResponseModel();
             responseModel.getList(this);
-        }
-        else {
-            swetabh.suman.com.imageloadingapp.util.Utils.showToast(getActivity(),getString(R.string.internet_connect_check));
+        } else {
+            swetabh.suman.com.imageloadingapp.util.Utils.showToast(getActivity(), getString(R.string.internet_connect_check));
         }
     }
 
     private void setLayoutManagerToRecyclerView() {
         layoutManager = new GridLayoutManager(getActivity(), 2);
         grid.setLayoutManager(layoutManager);
+
+        grid.addOnScrollListener(new InfiniteScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int current_page) {
+                loadMore = true;
+                callWebService();
+            }
+        });
         grid.setHasFixedSize(true);
         grid.setAdapter(adapter);
     }
@@ -209,7 +210,12 @@ public class ImageGridFragment extends Fragment implements ResponseModel.IListRe
             mSwipeRefreshLayout.setRefreshing(false);
         }
         setList(list);
-        adapter.addData(list);
+        if (loadMore) {
+            adapter.addAllData(list);
+        } else {
+            adapter.addData(list);
+        }
+        loadMore = false;
         final int columnWidth =
                 (grid.getWidth() / 2) - mImageThumbSpacing;
         adapter.setNumColumns(2);

@@ -68,6 +68,11 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.Item
         notifyDataSetChanged();
     }
 
+    public void addAllData(List<ResponseModel> list) {
+        mList.addAll(list);
+        notifyDataSetChanged();
+    }
+
     public class ItemHolder extends RecyclerView.ViewHolder {
         public ImageView vh_Image;
         public TextView vh_Title;
@@ -81,7 +86,7 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.Item
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mFragment.setImageView(vh_Image,mList.get(getAdapterPosition()).getUrls().getFull());
+                    mFragment.setImageView(vh_Image, mList.get(getAdapterPosition()).getUrls().getFull());
                 }
             });
 

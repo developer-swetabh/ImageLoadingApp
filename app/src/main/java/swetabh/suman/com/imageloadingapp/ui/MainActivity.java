@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private ImageGridFragment mFragment;
     private FloatingActionButton fab;
+    int count = 0;
 
 
     @Override
@@ -55,7 +56,14 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "FAB Clicked", LENGTH_SHORT).show();
+                if (count % 3 == 0)
+                    Toast.makeText(MainActivity.this, "Thinking what to implement on this. :D ", LENGTH_SHORT).show();
+                else if (count % 3 == 1)
+                    Toast.makeText(MainActivity.this, "Still thinking what to implement :) ", LENGTH_SHORT).show();
+                else if (count % 3 == 2)
+                    Toast.makeText(MainActivity.this, "I told you I am thinking :D ", LENGTH_SHORT).show();
+
+                count++;
             }
         });
 
@@ -103,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
         if (mFragment != null) {
             if (mFragment.getCurrentAnimator() != null) {
                 mFragment.getCurrentAnimator().cancel();
-            }
-            else {
+            } else {
                 this.finish();
             }
         } else {

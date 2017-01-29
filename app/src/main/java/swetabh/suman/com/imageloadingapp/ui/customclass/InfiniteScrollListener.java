@@ -12,32 +12,45 @@ import swetabh.suman.com.imageloadingapp.data.DataLoadingSubject;
 
 public abstract class InfiniteScrollListener extends RecyclerView.OnScrollListener {
 
-    // The minimum number of items remaining before we should loading more.
-    private static final int VISIBLE_THRESHOLD = 5;
+    private int previousTotal = 0; // The total number of items in the dataset after the last load
+    private boolean loading = true; // True if we are still waiting for the last set of data to load.
+    private int visibleThreshold = 2; // The minimum amount of items to have below your current scroll position before loading more.
+    int firstVisibleItem, visibleItemCount, totalItemCount;
 
-    private final LinearLayoutManager layoutManager;
-    private final DataLoadingSubject dataLoading;
+    private int current_page = 1;
 
-    public InfiniteScrollListener(@NonNull LinearLayoutManager layoutManager,
-                                  @NonNull DataLoadingSubject dataLoading) {
-        this.layoutManager = layoutManager;
-        this.dataLoading = dataLoading;
+    private LinearLayoutManager mLinearLayoutManager;
+
+    public InfiniteScrollListener(LinearLayoutManager linearLayoutManager) {
+        this.mLinearLayoutManager = linearLayoutManager;
     }
 
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-        // bail out if scrolling upward or already loading data
-        if (dy < 0 || dataLoading.isDataLoading()) return;
+        super.onScrolled(recyclerView, dx, dy);
 
-        final int visibleItemCount = recyclerView.getChildCount();
-        final int totalItemCount = layoutManager.getItemCount();
-        final int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+        visibleItemCount = recyclerView.getChildCount();
+        totalItemCount = mLinearLayoutManager.getItemCount();
+        firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
 
-        if ((totalItemCount - visibleItemCount) <= (firstVisibleItem + VISIBLE_THRESHOLD)) {
-            onLoadMore();
+        if (loading) {
+            if (totalItemCount > previousTotal) {
+                loading = false;
+                previousTotal = totalItemCount;
+            }
+        }
+        if (!loading && (totalItemCount - visibleItemCount)
+                <= (firstVisibleItem + visibleThreshold)) {
+            // End has been reached
+
+            // Do something
+            current_page++;
+
+            onLoadMore(current_page);
+
+            loading = true;
         }
     }
 
-    public abstract void onLoadMore();
-
+    public abstract void onLoadMore(int current_page);
 }
