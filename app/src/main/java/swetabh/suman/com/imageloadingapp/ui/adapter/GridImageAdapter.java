@@ -16,6 +16,7 @@ import java.util.List;
 import swetabh.suman.com.imageloadingapp.R;
 import swetabh.suman.com.imageloadingapp.data.model.ResponseModel;
 import swetabh.suman.com.imageloadingapp.ui.ImageGridFragment;
+import swetabh.suman.com.imageloadingapp.util.Utils;
 import swetabh.suman.com.imageloadinglibrary.ImageFetcher;
 
 /**
@@ -31,6 +32,7 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.Item
     private LinearLayout.LayoutParams mImageViewLayoutParams;
     private Context mContext;
     private ImageGridFragment mFragment;
+    int previousPosition = 0;
 
     public GridImageAdapter(FragmentActivity activity, ImageFetcher fetcher, List<ResponseModel> modelList) {
         mImageFetcher = fetcher;
@@ -55,6 +57,13 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.Item
         if (holder.vh_Image.getLayoutParams().height != mItemHeight) {
             holder.vh_Image.setLayoutParams(mImageViewLayoutParams);
         }
+
+        if (position > previousPosition) {
+            Utils.animate(holder, true);
+        } else {
+            Utils.animate(holder, false);
+        }
+        previousPosition = position;
         mImageFetcher.loadImage(mList.get(position).getUrls().getRegular(), holder.vh_Image);
     }
 
